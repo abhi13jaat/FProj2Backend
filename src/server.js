@@ -13,7 +13,10 @@ const app = express();
 
 // Production grade security headers
 app.use(helmet());
-app.use(cors()); // Apply CORS globally before rate-limits intercept
+app.use(cors({
+  origin: ["http://localhost:5173", "https://your-frontend.vercel.app", process.env.FRONTEND_URL].filter(Boolean),
+  credentials: true
+})); // Apply CORS globally before rate-limits intercept
 
 // Rate limiting against spam
 const apiLimiter = rateLimit({
