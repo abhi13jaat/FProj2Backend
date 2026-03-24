@@ -18,10 +18,16 @@ const generateAccessToken = async () => {
       body: "grant_type=client_credentials",
       headers: {
         Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
       },
     });
 
     const data = await response.json();
+    if (!data.access_token) {
+      console.error("PayPal Token Error:", data);
+      throw new Error("Failed to get access token");
+    }
+    
     return data.access_token;
   } catch (error) {
     console.error("Failed to generate Access Token:", error);
@@ -72,9 +78,20 @@ export const captureOrder = async (orderID) => {
 };
 
 async function handleResponse(response) {
-  if (response.status === 200 || response.status === 201) {
-    return response.json();
+  const text = await response.text();
+
+  try {
+    const json = JSON.parse(text);
+
+    if (response.status === 200 || response.status === 201) {
+      return json;
+    }
+
+    console.error("PayPal API Error:", json);
+    throw new Error(JSON.stringify(json));
+
+  } catch (err) {
+    console.error("Non-JSON PayPal Error:", text);
+    throw new Error(text);
   }
-  const errorMessage = await response.text();
-  throw new Error(errorMessage);
 }
