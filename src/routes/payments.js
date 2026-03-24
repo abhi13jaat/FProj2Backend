@@ -28,8 +28,8 @@ router.post('/create-order', async (req, res) => {
     const orderData = await createOrder(price);
     res.json({ id: orderData.id });
   } catch (err) {
-    console.error('Failed to create order:', err);
-    res.status(500).json({ error: 'Failed to create order.', details: err.message || err.toString() });
+    console.error("PAYPAL ERROR:", err.message || err);
+    res.status(500).json({ error: err.message || 'Failed to create order.' });
   }
 });
 
@@ -67,8 +67,8 @@ router.post('/capture-order', async (req, res) => {
       res.status(400).json({ error: 'Order not completed' });
     }
   } catch (err) {
-    console.error('Failed to capture order:', err);
-    res.status(500).json({ error: 'Failed to capture order.', details: err.message || err.toString() });
+    console.error("PAYPAL ERROR:", err.message || err);
+    res.status(500).json({ error: err.message || 'Failed to capture order.' });
   }
 });
 
