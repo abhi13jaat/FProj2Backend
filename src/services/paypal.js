@@ -9,7 +9,10 @@ const generateAccessToken = async () => {
     if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
       throw new Error("MISSING_API_CREDENTIALS");
     }
-    const auth = Buffer.from(PAYPAL_CLIENT_ID + ":" + PAYPAL_CLIENT_SECRET).toString("base64");
+    // Added .trim() to eliminate any hidden spaces or newlines copied from the Render dashboard
+    const clientId = PAYPAL_CLIENT_ID.trim();
+    const clientSecret = PAYPAL_CLIENT_SECRET.trim();
+    const auth = Buffer.from(clientId + ":" + clientSecret).toString("base64");
     const response = await fetch(`${base}/v1/oauth2/token`, {
       method: "POST",
       body: "grant_type=client_credentials",
